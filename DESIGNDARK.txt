@@ -1,0 +1,187 @@
+---
+name: Midnight Atmospheric
+colors:
+  surface: '#111318'
+  surface-dim: '#111318'
+  surface-bright: '#37393f'
+  surface-container-lowest: '#0c0e13'
+  surface-container-low: '#1a1b21'
+  surface-container: '#1a1c1e'
+  surface-container-high: '#24262a'
+  surface-container-highest: '#33353a'
+  on-surface: '#e2e2e6'
+  on-surface-variant: '#c1c7ce'
+  inverse-surface: '#e2e2e9'
+  inverse-on-surface: '#2e3036'
+  outline: '#8b9199'
+  outline-variant: '#41474d'
+  surface-tint: '#9fcaff'
+  primary: '#d2e4ff'
+  on-primary: '#003258'
+  primary-container: '#00497d'
+  on-primary-container: '#d1e4ff'
+  inverse-primary: '#346190'
+  secondary: '#bbc7db'
+  on-secondary: '#263141'
+  secondary-container: '#3c4858'
+  on-secondary-container: '#d7e3f8'
+  tertiary: '#ecc200'
+  on-tertiary: '#322800'
+  tertiary-container: '#f4bd6c'
+  on-tertiary-container: '#714b00'
+  error: '#ffb4ab'
+  on-error: '#690005'
+  error-container: '#93000a'
+  on-error-container: '#ffdad6'
+  primary-fixed: '#d1e4ff'
+  primary-fixed-dim: '#9fcaff'
+  on-primary-fixed: '#001d36'
+  on-primary-fixed-variant: '#164976'
+  secondary-fixed: '#d7e3f8'
+  secondary-fixed-dim: '#bbc7db'
+  on-secondary-fixed: '#101c2b'
+  on-secondary-fixed-variant: '#3c4858'
+  tertiary-fixed: '#ffddb1'
+  tertiary-fixed-dim: '#f4bd6c'
+  on-tertiary-fixed: '#291800'
+  on-tertiary-fixed-variant: '#624000'
+  background: '#111318'
+  on-background: '#e2e2e9'
+  surface-variant: '#33353a'
+typography:
+  display-lg:
+    fontFamily: Roboto Flex
+    fontSize: 96px
+    fontWeight: '300'
+    lineHeight: 112px
+    letterSpacing: -1.5px
+  display-lg-mobile:
+    fontFamily: Roboto Flex
+    fontSize: 72px
+    fontWeight: '300'
+    lineHeight: 80px
+    letterSpacing: -1px
+  display-md:
+    fontFamily: Roboto Flex
+    fontSize: 57px
+    fontWeight: '400'
+    lineHeight: 64px
+    letterSpacing: -0.25px
+  headline-lg:
+    fontFamily: Roboto Flex
+    fontSize: 32px
+    fontWeight: '400'
+    lineHeight: 40px
+  headline-md:
+    fontFamily: Roboto Flex
+    fontSize: 28px
+    fontWeight: '400'
+    lineHeight: 36px
+  title-lg:
+    fontFamily: Roboto Flex
+    fontSize: 22px
+    fontWeight: '500'
+    lineHeight: 28px
+  title-md:
+    fontFamily: Roboto Flex
+    fontSize: 16px
+    fontWeight: '500'
+    lineHeight: 24px
+    letterSpacing: 0.15px
+  body-lg:
+    fontFamily: Roboto Flex
+    fontSize: 16px
+    fontWeight: '400'
+    lineHeight: 24px
+    letterSpacing: 0.5px
+  body-md:
+    fontFamily: Roboto Flex
+    fontSize: 14px
+    fontWeight: '400'
+    lineHeight: 20px
+    letterSpacing: 0.25px
+  label-lg:
+    fontFamily: Roboto Flex
+    fontSize: 12px
+    fontWeight: '500'
+    lineHeight: 16px
+    letterSpacing: 0.5px
+rounded:
+  sm: 0.25rem
+  DEFAULT: 0.5rem
+  md: 0.75rem
+  lg: 1rem
+  xl: 1.5rem
+  full: 9999px
+spacing:
+  unit: 4px
+  margin-mobile: 16px
+  margin-tablet: 24px
+  margin-desktop: 32px
+  gutter: 16px
+  stack-sm: 8px
+  stack-md: 16px
+  stack-lg: 24px
+---
+
+## Brand & Style
+
+This design system is a sophisticated evolution of Material 3's "Atmospheric" style, specifically optimized for high-performance dark mode environments. It targets a tech-savvy audience—travelers, commuters, and data-enthusiasts—who require precision and clarity in low-light or high-contrast scenarios.
+
+The aesthetic blends **Modern Corporate** structure with a refined **Glassmorphism**. The design is defined by deep, expansive surfaces that mimic the night sky, utilizing "Atmospheric Material" principles where depth is conveyed through transparency and backdrop blurs rather than traditional shadows. The emotional response is one of calm authority, focused utility, and immersive data visualization.
+
+## Colors
+
+The palette is centered on a **Deep Navy and Slate** foundation to reduce eye strain and maximize the "Atmospheric" feel. 
+- **Primary Surfaces:** The core background is a deep slate (#111318), while primary containers use a slightly elevated navy (#1a1c1e).
+- **Accents:** We utilize an "Inverse-First" approach for dark mode, where the Primary Blue (#9fcaff) and Sunlit Gold (#ecc200) are desaturated and brightened to ensure they "glow" against dark backgrounds.
+- **Contrast:** All "On" colors (text and icons) are strictly regulated to maintain a minimum 4.5:1 contrast ratio. Secondary text uses an "On-Surface-Variant" to create hierarchy without sacrificing legibility.
+
+## Typography
+
+The typography system relies on **Roboto Flex** to leverage its variable weight and width capabilities for responsive data display.
+
+Hierarchy is established primarily through scale and weight contrast. The current temperature (Display Large) uses a thin 300 weight to maintain a premium, airy feel even in a dense dark UI. For mobile, the `display-lg-mobile` variant ensures that headline temperatures remain impactful without horizontal clipping. All body text is set with generous line-height to ensure maximum readability against dark, glassmorphic backgrounds.
+
+## Layout & Spacing
+
+This design system uses a **12-column fluid grid** for desktop and a **4-column grid** for mobile. The layout is driven by a 4px baseline grid, ensuring that every element—from icons to line heights—is mathematically aligned.
+
+Spacing is categorized into "Stacks" to define relationship density:
+- **Small (8px):** Groups tightly coupled data, such as a weather icon and its associated temperature.
+- **Medium (16px):** Standard spacing between sibling cards or navigation elements.
+- **Large (24px):** Used to separate distinct content blocks, such as the daily summary from the detailed metrics grid.
+
+## Elevation & Depth
+
+In this dark mode system, elevation is conveyed through **Tonal Layers** and **Backdrop Blurs** rather than traditional shadows.
+
+- **Level 0:** The base `surface` (#111318).
+- **Level 1 (Cards):** Use `surface-container` (#1a1c1e) at 85% opacity with a 24px backdrop blur. This allows background weather gradients to provide a subtle "atmospheric" glow through the UI.
+- **Level 2 (Modals/Overlays):** Use `surface-container-high` (#24262a) with a 95% opacity. A subtle 1px inner stroke using `outline-variant` is required to define edges where surfaces overlap.
+- **States:** Hover and press states are indicated by an `on-surface` overlay at 8% and 12% opacity respectively, creating a "shimmer" effect rather than a physical lift.
+
+## Shapes
+
+The shape language is organic and fluid. We use a **Rounded** (0.5rem base) strategy that scales significantly for larger containers to mimic the soft edges of clouds and natural forms.
+
+- **Standard Cards:** Use `rounded-xl` (1.5rem / 24px).
+- **Buttons & Search Fields:** Always use the full pill shape (999px) for high tap-target visibility and a modern feel.
+- **Small Components:** Like chips or selection indicators, use `rounded-lg` (1rem / 16px).
+
+## Components
+
+### Buttons
+Primary buttons use the `primary-container` background with `on-primary-container` text. They are always pill-shaped. Secondary buttons use a `ghost` style with an `outline` and no fill until interaction.
+
+### Weather Cards
+The core of the UI. Cards must use the glassmorphic treatment (85% opacity + blur). Content inside should be grouped using `stack-sm` for internal metrics. Data labels should use `label-lg` in `on-surface-variant` color.
+
+### Search Bar
+The search bar is a floating pill at the top of the viewport. It uses `surface-container-high` to distinguish it from the background and includes a 1px `outline-variant` border for definition.
+
+### Segmented Controls
+Used for time-range switching. The container is transparent; the active segment is a pill-shaped `secondary-container` that "slides" behind the text labels.
+
+### Weather Indicators
+Icons should not be purely flat. Use a subtle inner glow or gradient using `primary` and `tertiary` fixed colors to ensure they feel like "light sources" within the dark, atmospheric environment.

@@ -1,0 +1,5 @@
+- [User profile](user_profile.md) — learning Android/Kotlin through this project; tailor explanations
+- [Explicit Kotlin preference](feedback_explicit_kotlin.md) — no nested Pair/multi-level destructuring, use named params/data classes
+- [Ask before big UI decisions](feedback_ask_before_big_changes.md) — surface design/API choices with a proposed default, then proceed once confirmed
+- [Theme system](project_theme_system.md) — "Atmospheric Material" M3 theme, spec files, token wiring, Main Forecast Card + Grid Card patterns, confirmed no-material-icons-extended decision
+- [Thorough previews](feedback_thorough_previews.md) — ship multiple @Preview variants (edge cases x both themes) by default, not just one per theme

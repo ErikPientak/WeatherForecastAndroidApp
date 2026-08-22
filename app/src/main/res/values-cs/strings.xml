@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WeatherForeCastAndroidApp</string>
+    <string name="nav_home">Domů</string>
+    <string name="nav_forecast">Předpověď</string>
+    <string name="nav_saved_places">Uložená místa</string>
+</resources>

@@ -10,11 +10,13 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -26,17 +28,18 @@ import androidx.navigation.toRoute
 import com.example.weatherforecastandroidapp.ui.screens.forecast.ForecastScreen
 import com.example.weatherforecastandroidapp.ui.screens.home.HomeScreen
 import com.example.weatherforecastandroidapp.ui.screens.savedPlaces.SavedPlacesScreen
+import com.example.weatherforecastandroidapp.R
 
 private data class BottomNavItem(
     val destination: Destination,
     val icon: ImageVector,
-    val label: String,
+    @param:StringRes val labelRes: Int,
 )
 
 private val bottomBarItems = listOf(
-    BottomNavItem(Destination.HomeScreen, Icons.Default.Home, "Home"),
-    BottomNavItem(Destination.ForecastScreen, Icons.Default.DateRange, "Forecast"),
-    BottomNavItem(Destination.SavedPlacesScreen, Icons.Default.Place, "Saved Places"),
+    BottomNavItem(Destination.HomeScreen, Icons.Default.Home, R.string.nav_home),
+    BottomNavItem(Destination.ForecastScreen, Icons.Default.DateRange, R.string.nav_forecast),
+    BottomNavItem(Destination.SavedPlacesScreen, Icons.Default.Place, R.string.nav_saved_places),
 )
 
 @Composable
@@ -55,6 +58,7 @@ fun NavGraph(
             if (showBottomBar) {
                 NavigationBar {
                     bottomBarItems.forEach { item ->
+                        val label = stringResource(item.labelRes)
                         NavigationBarItem(
                             selected = backStackEntry?.destination?.hasRoute(item.destination::class) == true,
                             onClick = {
@@ -66,8 +70,8 @@ fun NavGraph(
                                     }
                                 }
                             },
-                            icon = { Icon(item.icon, contentDescription = item.label) },
-                            label = { Text(item.label) },
+                            icon = { Icon(item.icon, contentDescription = label) },
+                            label = { Text(label) },
                         )
                     }
                 }
@@ -77,7 +81,9 @@ fun NavGraph(
         NavHost(
             navController = navController,
             startDestination = startDestination,
-            modifier = Modifier.padding(innerPadding),
+            // Only clear the bottom nav bar here — no topBar on this Scaffold, so the top inset
+            // is left for each screen's own BaseScreen/TopAppBar to consume exactly once itself.
+            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
         ) {
             composable<Destination.HomeScreen> { HomeScreen() }
             composable<Destination.ForecastScreen> { ForecastScreen() }
