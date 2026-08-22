@@ -23,6 +23,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.weatherforecastandroidapp.ui.screens.forecast.ForecastScreen
+import com.example.weatherforecastandroidapp.ui.screens.home.HomeScreen
+import com.example.weatherforecastandroidapp.ui.screens.savedPlaces.SavedPlacesScreen
 
 private data class BottomNavItem(
     val destination: Destination,
@@ -76,9 +79,9 @@ fun NavGraph(
             startDestination = startDestination,
             modifier = Modifier.padding(innerPadding),
         ) {
-            composable<Destination.HomeScreen> {}
-            composable<Destination.ForecastScreen> {}
-            composable<Destination.SavedPlacesScreen> {}
+            composable<Destination.HomeScreen> { HomeScreen() }
+            composable<Destination.ForecastScreen> { ForecastScreen() }
+            composable<Destination.SavedPlacesScreen> { SavedPlacesScreen() }
             composable<Destination.SearchPlaceScreen> {}
             composable<Destination.SettingsScreen> {}
             composable<Destination.DetailScreen> { backStackEntry ->
