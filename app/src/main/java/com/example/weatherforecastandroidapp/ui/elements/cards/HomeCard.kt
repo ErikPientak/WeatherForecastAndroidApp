@@ -1,4 +1,4 @@
-package com.example.weatherforecastandroidapp.ui.elements
+package com.example.weatherforecastandroidapp.ui.elements.cards
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
