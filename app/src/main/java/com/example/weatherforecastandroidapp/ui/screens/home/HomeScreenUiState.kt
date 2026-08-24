@@ -12,6 +12,11 @@ sealed interface HomeScreenUiState {
         val isDay: Boolean,
         val highTemperature: Int,
         val lowTemperature: Int,
+        val humidity: Int,
+        val windSpeed: Double,
+        val windDirection: Int,
+        val pressure: Double,
+        val dewPoint: Int,
         val hourlyForecast: List<HourlyForecastItem>,
     ) : HomeScreenUiState
     data object PermissionRequired : HomeScreenUiState

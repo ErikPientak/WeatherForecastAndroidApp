@@ -3,8 +3,67 @@
     <string name="nav_home">Home</string>
     <string name="nav_forecast">Forecast</string>
     <string name="nav_saved_places">Saved Places</string>
-    # Error messages
-    <string name="error_location_not_found">Could not retrieve location. Make sure to grant permission and enable GPS.</string>
-    <string name="error_could_not_load_forecast"> Could not load forecast.</string>
 
+    <!-- Error messages -->
+    <string name="error_location_not_found">Could not retrieve location. Make sure to grant permission and enable GPS.</string>
+    <string name="error_could_not_load_forecast">Could not load forecast.</string>
+
+    <!-- Home screen -->
+    <string name="home_permission_required">Permission required</string>
+    <string name="home_card_high_low_description">High %1$d degrees, low %2$d degrees</string>
+
+    <!-- Metric card -->
+    <string name="metric_humidity_label">Humidity</string>
+    <string name="metric_wind_label">Wind</string>
+    <string name="metric_uv_index_label">UV Index</string>
+    <string name="metric_pressure_label">Pressure</string>
+    <string name="metric_dew_point_caption">Dew point %d°</string>
+    <string name="metric_wind_direction_caption">Direction: %s</string>
+    <string name="unit_percent">%</string>
+    <string name="unit_km_h">km/h</string>
+    <string name="unit_hpa">hPa</string>
+
+    <!-- UV index category (WHO scale) -->
+    <string name="uv_category_low">Low</string>
+    <string name="uv_category_moderate">Moderate</string>
+    <string name="uv_category_high">High</string>
+    <string name="uv_category_very_high">Very High</string>
+    <string name="uv_category_extreme">Extreme</string>
+
+    <!-- Pressure category (absolute, not trend) -->
+    <string name="pressure_category_low">Low</string>
+    <string name="pressure_category_normal">Normal</string>
+    <string name="pressure_category_high">High</string>
+
+    <!-- Wind direction (8-point compass) -->
+    <string name="wind_direction_n">N</string>
+    <string name="wind_direction_ne">NE</string>
+    <string name="wind_direction_e">E</string>
+    <string name="wind_direction_se">SE</string>
+    <string name="wind_direction_s">S</string>
+    <string name="wind_direction_sw">SW</string>
+    <string name="wind_direction_w">W</string>
+    <string name="wind_direction_nw">NW</string>
+
+    <!-- Hourly forecast card -->
+    <string name="hourly_forecast_title">Hourly Forecast</string>
+    <string name="hourly_forecast_entry_description">%1$s, %2$s, %3$d degrees</string>
+
+    <!-- Weather condition descriptions (WMO codes) -->
+    <string name="weather_clear_sky">Clear sky</string>
+    <string name="weather_mainly_clear">Mainly clear</string>
+    <string name="weather_partly_cloudy">Partly cloudy</string>
+    <string name="weather_overcast">Overcast</string>
+    <string name="weather_fog">Fog</string>
+    <string name="weather_drizzle">Drizzle</string>
+    <string name="weather_freezing_drizzle">Freezing drizzle</string>
+    <string name="weather_rain">Rain</string>
+    <string name="weather_freezing_rain">Freezing rain</string>
+    <string name="weather_snow_fall">Snow fall</string>
+    <string name="weather_snow_grains">Snow grains</string>
+    <string name="weather_rain_showers">Rain showers</string>
+    <string name="weather_snow_showers">Snow showers</string>
+    <string name="weather_thunderstorm">Thunderstorm</string>
+    <string name="weather_thunderstorm_hail">Thunderstorm with hail</string>
+    <string name="weather_unknown">Unknown</string>
 </resources>

@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -14,12 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.weatherforecastandroidapp.R
 import com.example.weatherforecastandroidapp.ui.theme.DisplayLargeMobile
 import com.example.weatherforecastandroidapp.ui.theme.WeatherForeCastAndroidAppTheme
 import com.example.weatherforecastandroidapp.util.WeatherCodeMapper
@@ -48,13 +52,15 @@ fun HomeCard(
     } else {
         listOf(colorScheme.surface, colorScheme.primaryFixed)
     }
+    val highLowDescription = stringResource(
+        R.string.home_card_high_low_description, highTemperature, lowTemperature
+    )
 
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
+            .clip(MaterialTheme.shapes.medium)
             .background(Brush.verticalGradient(gradientColors))
-            .padding(vertical = 32.dp, horizontal = 24.dp),
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -64,21 +70,22 @@ fun HomeCard(
             // Decorative: the condition text below already conveys this information to TalkBack.
             modifier = Modifier.clearAndSetSemantics {},
         )
+        Spacer(Modifier.height(5.dp))
         Text(
             text = "$temperature°",
             style = DisplayLargeMobile,
             color = colorScheme.onSurface,
         )
         Text(
-            text = WeatherCodeMapper.description(weatherCode),
-            style = MaterialTheme.typography.bodyLarge,
+            text = stringResource(WeatherCodeMapper.descriptionRes(weatherCode)),
+            style = MaterialTheme.typography.titleLarge,
             color = colorScheme.onSurfaceVariant,
         )
         Surface(
             shape = MaterialTheme.shapes.small,
             color = colorScheme.surfaceContainerHigh,
             modifier = Modifier.clearAndSetSemantics {
-                contentDescription = "High $highTemperature degrees, low $lowTemperature degrees"
+                contentDescription = highLowDescription
             },
         ) {
             Text(
@@ -103,7 +110,7 @@ private fun HomeCardLightPreview() {
             isDay = true,
             highTemperature = 26,
             lowTemperature = 18,
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
         )
     }
 }
@@ -119,7 +126,7 @@ private fun HomeCardDarkPreview() {
             isDay = true,
             highTemperature = 26,
             lowTemperature = 18,
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
         )
     }
 }
@@ -135,7 +142,7 @@ private fun HomeCardClearDayPreview() {
             isDay = true,
             highTemperature = 33,
             lowTemperature = 22,
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
         )
     }
 }
@@ -151,7 +158,7 @@ private fun HomeCardClearNightPreview() {
             isDay = false,
             highTemperature = 19,
             lowTemperature = 9,
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
         )
     }
 }
@@ -167,7 +174,7 @@ private fun HomeCardRainPreview() {
             isDay = true,
             highTemperature = 18,
             lowTemperature = 13,
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
         )
     }
 }
@@ -183,7 +190,7 @@ private fun HomeCardThunderstormPreview() {
             isDay = true,
             highTemperature = 25,
             lowTemperature = 17,
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
         )
     }
 }
@@ -199,7 +206,7 @@ private fun HomeCardSnowPreview() {
             isDay = true,
             highTemperature = 1,
             lowTemperature = -6,
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
         )
     }
 }
@@ -215,7 +222,7 @@ private fun HomeCardFogPreview() {
             isDay = true,
             highTemperature = 11,
             lowTemperature = 7,
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
         )
     }
 }

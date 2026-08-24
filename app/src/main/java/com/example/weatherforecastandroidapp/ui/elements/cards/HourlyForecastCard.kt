@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -19,8 +20,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.weatherforecastandroidapp.R
 import com.example.weatherforecastandroidapp.ui.theme.WeatherForeCastAndroidAppTheme
 import com.example.weatherforecastandroidapp.util.WeatherCodeMapper
+import java.time.LocalDateTime
 
 /**
  * Presentation-only shape for a single hourly-forecast slot. Kept decoupled from
@@ -33,6 +36,7 @@ data class HourlyForecastItem(
     val label: String,
     val temperature: Int,
     val weatherCode: Int,
+    val uvIndex: Double? = null,
     val isDay: Boolean = true,
 )
 
@@ -59,7 +63,7 @@ fun HourlyForecastCard(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            text = "Hourly Forecast",
+            text = stringResource(R.string.hourly_forecast_title),
             style = MaterialTheme.typography.titleMedium,
             color = colorScheme.onSurface,
         )
@@ -67,7 +71,7 @@ fun HourlyForecastCard(
             horizontalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             itemsIndexed(items) { index, item ->
-                HourlyForecastEntry(item = item, isNow = index == 0)
+                HourlyForecastEntry(item = item, isNow = index == LocalDateTime.now().hour)
             }
         }
     }
@@ -76,6 +80,12 @@ fun HourlyForecastCard(
 @Composable
 private fun HourlyForecastEntry(item: HourlyForecastItem, isNow: Boolean) {
     val colorScheme = MaterialTheme.colorScheme
+    val entryDescription = stringResource(
+        R.string.hourly_forecast_entry_description,
+        item.label,
+        stringResource(WeatherCodeMapper.descriptionRes(item.weatherCode)),
+        item.temperature,
+    )
 
     Column(
         modifier = Modifier
@@ -84,9 +94,7 @@ private fun HourlyForecastEntry(item: HourlyForecastItem, isNow: Boolean) {
             // own), so it needs to be spelled out here for accessibility (e.g. "Now, partly
             // cloudy, 24 degrees").
             .semantics(mergeDescendants = true) {
-                contentDescription = "${item.label}, " +
-                    "${WeatherCodeMapper.description(item.weatherCode)}, " +
-                    "${item.temperature} degrees"
+                contentDescription = entryDescription
             },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),

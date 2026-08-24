@@ -6,6 +6,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.example.weatherforecastandroidapp.R
 
 @Composable
 fun SavedPlacesScreen(){
@@ -13,6 +15,6 @@ fun SavedPlacesScreen(){
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        Text("Saved Places")
+        Text(stringResource(R.string.nav_saved_places))
     }
 }

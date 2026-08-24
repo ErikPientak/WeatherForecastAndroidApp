@@ -4,7 +4,67 @@
     <string name="nav_home">Domů</string>
     <string name="nav_forecast">Předpověď</string>
     <string name="nav_saved_places">Uložená místa</string>
-    # Error messages
-    <string name="error_location_not_found"> Nemůžeme najít lokaci. Ujistěte se, že povolíte přístup k poloze a zapnete GPS.</string>
-    <string name="error_could_not_load_forecast"> Nemohu načíst předpověď.</string>"
+
+    <!-- Error messages -->
+    <string name="error_location_not_found">Nemůžeme najít lokaci. Ujistěte se, že povolíte přístup k poloze a zapnete GPS.</string>
+    <string name="error_could_not_load_forecast">Nemohu načíst předpověď.</string>
+
+    <!-- Home screen -->
+    <string name="home_permission_required">Vyžadováno oprávnění</string>
+    <string name="home_card_high_low_description">Nejvyšší %1$d stupňů, nejnižší %2$d stupňů</string>
+
+    <!-- Metric card -->
+    <string name="metric_humidity_label">Vlhkost</string>
+    <string name="metric_wind_label">Vítr</string>
+    <string name="metric_uv_index_label">UV index</string>
+    <string name="metric_pressure_label">Tlak</string>
+    <string name="metric_dew_point_caption">Rosný bod %d°</string>
+    <string name="metric_wind_direction_caption">Směr: %s</string>
+    <string name="unit_percent">%</string>
+    <string name="unit_km_h">km/h</string>
+    <string name="unit_hpa">hPa</string>
+
+    <!-- UV index category (stupnice WHO) -->
+    <string name="uv_category_low">Nízký</string>
+    <string name="uv_category_moderate">Střední</string>
+    <string name="uv_category_high">Vysoký</string>
+    <string name="uv_category_very_high">Velmi vysoký</string>
+    <string name="uv_category_extreme">Extrémní</string>
+
+    <!-- Kategorie tlaku (absolutní, ne trend) -->
+    <string name="pressure_category_low">Nízký</string>
+    <string name="pressure_category_normal">Normální</string>
+    <string name="pressure_category_high">Vysoký</string>
+
+    <!-- Směr větru (8bodový kompas) -->
+    <string name="wind_direction_n">S</string>
+    <string name="wind_direction_ne">SV</string>
+    <string name="wind_direction_e">V</string>
+    <string name="wind_direction_se">JV</string>
+    <string name="wind_direction_s">J</string>
+    <string name="wind_direction_sw">JZ</string>
+    <string name="wind_direction_w">Z</string>
+    <string name="wind_direction_nw">SZ</string>
+
+    <!-- Hourly forecast card -->
+    <string name="hourly_forecast_title">Hodinová předpověď</string>
+    <string name="hourly_forecast_entry_description">%1$s, %2$s, %3$d stupňů</string>
+
+    <!-- Weather condition descriptions (WMO codes) -->
+    <string name="weather_clear_sky">Jasno</string>
+    <string name="weather_mainly_clear">Skoro jasno</string>
+    <string name="weather_partly_cloudy">Polojasno</string>
+    <string name="weather_overcast">Zataženo</string>
+    <string name="weather_fog">Mlha</string>
+    <string name="weather_drizzle">Mrholení</string>
+    <string name="weather_freezing_drizzle">Mrznoucí mrholení</string>
+    <string name="weather_rain">Déšť</string>
+    <string name="weather_freezing_rain">Mrznoucí déšť</string>
+    <string name="weather_snow_fall">Sněžení</string>
+    <string name="weather_snow_grains">Sněhová zrna</string>
+    <string name="weather_rain_showers">Přeháňky</string>
+    <string name="weather_snow_showers">Sněhové přeháňky</string>
+    <string name="weather_thunderstorm">Bouřka</string>
+    <string name="weather_thunderstorm_hail">Bouřka s kroupami</string>
+    <string name="weather_unknown">Neznámé</string>
 </resources>

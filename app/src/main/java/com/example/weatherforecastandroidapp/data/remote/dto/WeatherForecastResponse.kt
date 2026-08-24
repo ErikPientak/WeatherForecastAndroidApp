@@ -21,6 +21,7 @@ data class CurrentDto(
     val surface_pressure: Double,
     val wind_speed_10m: Double,
     val wind_direction_10m: Int,
+    val dew_point_2m: Double,
 )
 
 @Serializable
@@ -29,6 +30,7 @@ data class HourlyDto(
     val temperature_2m: List<Double>,
     val weather_code: List<Int>,
     val precipitation_probability: List<Int>,
+    val uv_index: List<Double>,
 )
 
 @Serializable
@@ -40,4 +42,6 @@ data class DailyDto(
     val precipitation_probability_max: List<Int>,
     val sunrise: List<String>,
     val sunset: List<String>,
+    val uv_index_max: List<Double>,
+    val daylight_duration: List<Double>,
 )

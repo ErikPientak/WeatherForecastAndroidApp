@@ -35,6 +35,7 @@ class WeatherRepositoryImpl @Inject constructor(
             pressure = current.surface_pressure,
             isDay = current.is_day == 1,
             weatherCode = current.weather_code,
+            dewPoint = current.dew_point_2m,
         ),
         hourly = hourly.time.indices.map { i ->
             HourlyEntry(
@@ -42,6 +43,7 @@ class WeatherRepositoryImpl @Inject constructor(
                 temperature = hourly.temperature_2m[i],
                 precipitationProbability = hourly.precipitation_probability[i],
                 weatherCode = hourly.weather_code[i],
+                uvIndex = hourly.uv_index[i],
             )
         },
         daily = daily.time.indices.map { i ->
@@ -53,6 +55,8 @@ class WeatherRepositoryImpl @Inject constructor(
                 precipitationProbabilityMax = daily.precipitation_probability_max[i],
                 sunrise = daily.sunrise[i],
                 sunset = daily.sunset[i],
+                uvIndexMax = daily.uv_index_max[i],
+                daylightDuration = daily.daylight_duration[i],
             )
         },
     )
@@ -60,10 +64,10 @@ class WeatherRepositoryImpl @Inject constructor(
     private companion object {
         const val CURRENT_FIELDS =
             "temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation," +
-                "weather_code,surface_pressure,wind_speed_10m,wind_direction_10m"
-        const val HOURLY_FIELDS = "temperature_2m,weather_code,precipitation_probability"
+                "weather_code,surface_pressure,wind_speed_10m,wind_direction_10m,dew_point_2m"
+        const val HOURLY_FIELDS = "temperature_2m,weather_code,precipitation_probability,uv_index"
         const val DAILY_FIELDS =
             "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max," +
-                "sunrise,sunset"
+                "sunrise,sunset,uv_index_max,daylight_duration"
     }
 }

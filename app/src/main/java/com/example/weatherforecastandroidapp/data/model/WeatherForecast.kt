@@ -15,6 +15,7 @@ data class CurrentConditions(
     val pressure: Double,
     val isDay: Boolean,
     val weatherCode: Int,
+    val dewPoint: Double,
 )
 
 data class HourlyEntry(
@@ -22,6 +23,7 @@ data class HourlyEntry(
     val temperature: Double,
     val precipitationProbability: Int,
     val weatherCode: Int,
+    val uvIndex: Double,
 )
 
 data class DailyEntry(
@@ -32,4 +34,6 @@ data class DailyEntry(
     val precipitationProbabilityMax: Int,
     val sunrise: String,
     val sunset: String,
+    val uvIndexMax: Double,
+    val daylightDuration: Double,
 )
