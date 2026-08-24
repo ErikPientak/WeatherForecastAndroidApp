@@ -49,6 +49,9 @@
     <string name="hourly_forecast_title">Hourly Forecast</string>
     <string name="hourly_forecast_entry_description">%1$s, %2$s, %3$d degrees</string>
 
+    <!-- Precipitation chance graph card -->
+    <string name="precipitation_chance_title">Precipitation Chance</string>
+
     <!-- Weather condition descriptions (WMO codes) -->
     <string name="weather_clear_sky">Clear sky</string>
     <string name="weather_mainly_clear">Mainly clear</string>

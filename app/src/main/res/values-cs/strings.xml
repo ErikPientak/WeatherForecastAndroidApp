@@ -50,6 +50,9 @@
     <string name="hourly_forecast_title">Hodinová předpověď</string>
     <string name="hourly_forecast_entry_description">%1$s, %2$s, %3$d stupňů</string>
 
+    <!-- Precipitation chance graph card -->
+    <string name="precipitation_chance_title">Pravděpodobnost srážek</string>
+
     <!-- Weather condition descriptions (WMO codes) -->
     <string name="weather_clear_sky">Jasno</string>
     <string name="weather_mainly_clear">Skoro jasno</string>
