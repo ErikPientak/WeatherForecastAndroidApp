@@ -59,6 +59,14 @@
     <string name="weekly_forecast_title">7denní předpověď</string>
     <string name="weekly_forecast_entry_description">%1$s, %2$s, minimum %3$d stupňů, maximum %4$d stupňů</string>
 
+    <!-- Vyhledávání měst -->
+    <string name="forecast_search_content_description">Vyhledat město</string>
+    <string name="forecast_search_placeholder">Hledat město</string>
+    <string name="forecast_search_close_content_description">Zavřít vyhledávání</string>
+    <string name="forecast_search_clear_content_description">Vymazat vyhledávání</string>
+    <string name="forecast_search_no_results">Žádná města nenalezena</string>
+    <string name="forecast_search_result_description">%1$s, %2$s</string>
+
     <!-- Weather condition descriptions (WMO codes) -->
     <string name="weather_clear_sky">Jasno</string>
     <string name="weather_mainly_clear">Skoro jasno</string>

@@ -58,6 +58,14 @@
     <string name="weekly_forecast_title">7-Day Forecast</string>
     <string name="weekly_forecast_entry_description">%1$s, %2$s, low %3$d degrees, high %4$d degrees</string>
 
+    <!-- Forecast city search -->
+    <string name="forecast_search_content_description">Search for a city</string>
+    <string name="forecast_search_placeholder">Search city</string>
+    <string name="forecast_search_close_content_description">Close search</string>
+    <string name="forecast_search_clear_content_description">Clear search</string>
+    <string name="forecast_search_no_results">No cities found</string>
+    <string name="forecast_search_result_description">%1$s, %2$s</string>
+
     <!-- Weather condition descriptions (WMO codes) -->
     <string name="weather_clear_sky">Clear sky</string>
     <string name="weather_mainly_clear">Mainly clear</string>

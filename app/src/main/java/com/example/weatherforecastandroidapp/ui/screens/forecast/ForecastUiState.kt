@@ -12,5 +12,7 @@ sealed interface ForecastUiState {
         val dailyForecast: List<PrecipitationPoint>,
         val hourlyForecast: List<PrecipitationPoint>,
         val weeklyForecast: List<WeeklyForecastDay>,
+        val locationName: String
     ) : ForecastUiState
+
 }
