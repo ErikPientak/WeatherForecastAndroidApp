@@ -52,6 +52,12 @@
 
     <!-- Precipitation chance graph card -->
     <string name="precipitation_chance_title">Pravděpodobnost srážek</string>
+    <string name="forecast_range_daily">Denně</string>
+    <string name="forecast_range_hourly">Hodinově</string>
+
+    <!-- Weekly forecast card -->
+    <string name="weekly_forecast_title">7denní předpověď</string>
+    <string name="weekly_forecast_entry_description">%1$s, %2$s, minimum %3$d stupňů, maximum %4$d stupňů</string>
 
     <!-- Weather condition descriptions (WMO codes) -->
     <string name="weather_clear_sky">Jasno</string>

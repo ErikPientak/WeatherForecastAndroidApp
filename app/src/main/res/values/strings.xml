@@ -51,6 +51,12 @@
 
     <!-- Precipitation chance graph card -->
     <string name="precipitation_chance_title">Precipitation Chance</string>
+    <string name="forecast_range_daily">Daily</string>
+    <string name="forecast_range_hourly">Hourly</string>
+
+    <!-- Weekly forecast card -->
+    <string name="weekly_forecast_title">7-Day Forecast</string>
+    <string name="weekly_forecast_entry_description">%1$s, %2$s, low %3$d degrees, high %4$d degrees</string>
 
     <!-- Weather condition descriptions (WMO codes) -->
     <string name="weather_clear_sky">Clear sky</string>
