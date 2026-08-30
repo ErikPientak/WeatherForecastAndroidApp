@@ -119,3 +119,14 @@ val DarkOnTertiaryFixedVariant = Color(0xFF624000)
 val DarkBackground = Color(0xFF111318)
 val DarkOnBackground = Color(0xFFE2E2E9)
 val DarkSurfaceVariant = Color(0xFF33353A)
+
+// --- Saved Location Card: "night" condition tile ---
+// Not part of DESIGN..txt/DESIGNDARK.txt (this card postdates both specs) and deliberately NOT
+// swapped by app theme like the rest of this file's tokens: a night-time saved-location tile
+// should read as dark charcoal regardless of whether the app itself is in light or dark mode
+// (see SavedLocationCard.kt's per-condition background strategy). Eyeballed from the reference
+// mockup's Tokyo tile the same way MetricCard's surfaceContainer match was eyeballed against
+// screenshots, not read off a spec.
+val NightCardSurface = Color(0xFF2B2D31)
+val NightCardOnSurface = Color(0xFFF2F2F5)
+val NightCardOnSurfaceVariant = Color(0xFFAEB1BA)

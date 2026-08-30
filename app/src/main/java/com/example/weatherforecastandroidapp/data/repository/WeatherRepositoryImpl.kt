@@ -27,6 +27,7 @@ class WeatherRepositoryImpl @Inject constructor(
 
     private fun WeatherForecastResponse.toDomain(): WeatherForecast = WeatherForecast(
         current = CurrentConditions(
+            time = current.time,
             temperature = current.temperature_2m,
             apparentTemperature = current.apparent_temperature,
             humidity = current.relative_humidity_2m,

@@ -1,5 +1,6 @@
 package com.example.weatherforecastandroidapp.ui.screens.forecast
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherforecastandroidapp.R
@@ -57,6 +58,7 @@ class ForecastViewModel @Inject constructor(
             }
             is ForecastScreenActions.SearchQueryChanged -> onSearchQueryChanged(action.query)
             is ForecastScreenActions.PlaceSelected -> onPlaceSelected(action.place)
+            is ForecastScreenActions.PlaceSaved -> selectedLocation?.let { onPlaceSaved(it) }
         }
     }
 
@@ -83,6 +85,13 @@ class ForecastViewModel @Inject constructor(
         selectedLocation = place
         _searchState.value = ForecastSearchState()
         loadForecast()
+    }
+
+    private fun onPlaceSaved(place: PlaceSearchResult){
+        viewModelScope.launch {
+            placesRepository.addPlace(place)
+        }
+        Log.d("ForecastViewModel", "Saved place: $place")
     }
 
     private fun loadForecast() {
