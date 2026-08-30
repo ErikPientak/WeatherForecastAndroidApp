@@ -3,14 +3,18 @@ package com.example.weatherforecastandroidapp.ui.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherforecastandroidapp.R
+import com.example.weatherforecastandroidapp.data.location.ActiveLocation
+import com.example.weatherforecastandroidapp.data.location.ActiveLocationController
 import com.example.weatherforecastandroidapp.data.location.LocationTracker
 import com.example.weatherforecastandroidapp.data.model.HourlyEntry
+import com.example.weatherforecastandroidapp.data.model.PlaceSearchResult
 import com.example.weatherforecastandroidapp.data.repository.WeatherRepository
 import com.example.weatherforecastandroidapp.ui.elements.cards.HourlyForecastItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -21,27 +25,107 @@ import javax.inject.Inject
 class HomeScreenViewModel @Inject constructor(
     private val weatherRepository: WeatherRepository,
     private val locationTracker: LocationTracker,
+    private val activeLocationController: ActiveLocationController,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeScreenUiState>(HomeScreenUiState.Loading)
     val uiState: StateFlow<HomeScreenUiState> = _uiState.asStateFlow()
 
+    // isActive (is the search bar showing) is the only piece of HomeScreenSearchState this screen
+    // owns locally — query/results/isSearching are mirrored in from ActiveLocationController
+    // below, since that's the single shared source of truth for search across screens.
+    private val _searchState = MutableStateFlow(HomeScreenSearchState())
+    val searchState: StateFlow<HomeScreenSearchState> = _searchState.asStateFlow()
+
+    // Gates the Gps branch of loadForecast(). activeLocation starts at Gps by default and the
+    // collector below fires on that value immediately at ViewModel creation — before HomeScreen's
+    // LaunchedEffect has had a chance to check/request ACCESS_FINE_LOCATION. Without this flag,
+    // loadForecast() would call LocationTracker.getCurrentLocation() (which assumes permission was
+    // already confirmed) before it actually was, risking a SecurityException on first launch.
+    private var hasLocationPermission = false
+
+    init {
+        viewModelScope.launch {
+            activeLocationController.activeLocation.collect { loadForecast() }
+        }
+        viewModelScope.launch {
+            activeLocationController.searchQuery.collect { query ->
+                _searchState.update { it.copy(query = query) }
+            }
+        }
+        viewModelScope.launch {
+            activeLocationController.searchResults.collect { results ->
+                _searchState.update { it.copy(results = results) }
+            }
+        }
+        viewModelScope.launch {
+            activeLocationController.isSearching.collect { isSearching ->
+                _searchState.update { it.copy(isSearching = isSearching) }
+            }
+        }
+    }
+
     fun onAction(action: HomeScreenActions) {
         when (action) {
-            HomeScreenActions.Retry,
-            HomeScreenActions.LocationPermissionGranted -> loadForecast()
-            HomeScreenActions.LocationPermissionDenied -> _uiState.value = HomeScreenUiState.PermissionRequired
+            HomeScreenActions.Retry -> loadForecast()
+            HomeScreenActions.LocationPermissionGranted -> {
+                hasLocationPermission = true
+                loadForecast()
+            }
+            HomeScreenActions.LocationPermissionDenied -> {
+                hasLocationPermission = false
+                _uiState.value = HomeScreenUiState.PermissionRequired
+            }
+            HomeScreenActions.SearchActivated -> _searchState.update { it.copy(isActive = true) }
+            HomeScreenActions.SearchDismissed -> {
+                activeLocationController.onSearchQueryChange("")
+                _searchState.update { it.copy(isActive = false) }
+            }
+            is HomeScreenActions.SearchQueryChanged -> activeLocationController.onSearchQueryChange(action.query)
+            is HomeScreenActions.PlaceSelected -> onPlaceSelected(action.place)
         }
+    }
+
+    private fun onPlaceSelected(place: PlaceSearchResult) {
+        _searchState.update { it.copy(isActive = false) }
+        activeLocationController.selectPlace(place)
     }
 
     private fun loadForecast() {
         viewModelScope.launch {
-            _uiState.value = HomeScreenUiState.Loading
-            val location = locationTracker.getCurrentLocation()
-            if (location == null) {
-                _uiState.value = HomeScreenUiState.Error(R.string.error_location_not_found)
+            val location = activeLocationController.activeLocation.value
+
+            // Permission not confirmed yet: bail out without touching LocationTracker or uiState.
+            // HomeScreen's LaunchedEffect will dispatch LocationPermissionGranted/Denied once the
+            // permission check/request resolves, which calls back into this function again.
+            if (location is ActiveLocation.Gps && !hasLocationPermission) {
                 return@launch
             }
-            weatherRepository.getForecast(location.latitude, location.longitude)
+
+            _uiState.value = HomeScreenUiState.Loading
+
+            val latitude: Double
+            val longitude: Double
+            val locationName: String
+
+            when (location) {
+                ActiveLocation.Gps -> {
+                    val gpsLocation = locationTracker.getCurrentLocation()
+                    if (gpsLocation == null) {
+                        _uiState.value = HomeScreenUiState.Error(R.string.error_location_not_found)
+                        return@launch
+                    }
+                    latitude = gpsLocation.latitude
+                    longitude = gpsLocation.longitude
+                    locationName = ""
+                }
+                is ActiveLocation.Searched -> {
+                    latitude = location.place.latitude
+                    longitude = location.place.longitude
+                    locationName = location.place.name
+                }
+            }
+
+            weatherRepository.getForecast(latitude, longitude)
                 .onSuccess { forecast ->
                     _uiState.value = HomeScreenUiState.Success(
                         temperature = forecast.current.temperature.toInt(),

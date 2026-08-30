@@ -36,6 +36,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.weatherforecastandroidapp.R
 import com.example.weatherforecastandroidapp.ui.elements.BaseScreen
+import com.example.weatherforecastandroidapp.ui.elements.CitySearchBar
 import com.example.weatherforecastandroidapp.ui.elements.LoadingScreen
 import com.example.weatherforecastandroidapp.ui.elements.cards.HomeCard
 import com.example.weatherforecastandroidapp.ui.elements.cards.HourlyForecastCard
@@ -50,6 +51,8 @@ import kotlin.math.roundToInt
 fun HomeScreen() {
     val viewModel = hiltViewModel<HomeScreenViewModel>()
     val state = viewModel.uiState.collectAsStateWithLifecycle()
+    val searchState = viewModel.searchState.collectAsStateWithLifecycle()
+
 
     val context = LocalContext.current
 
@@ -74,23 +77,28 @@ fun HomeScreen() {
 
     HomeScreenContent(
         state = state.value,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        searchState = searchState.value
     )
 }
 
 @Composable
 fun HomeScreenContent(
     state: HomeScreenUiState,
+    searchState: HomeScreenSearchState,
     onAction: (HomeScreenActions) -> Unit,
 ){
     BaseScreen(
         topBarText = stringResource(R.string.nav_home),
         actions = {
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(imageVector = Icons.Filled.Settings, contentDescription = null)
+            IconButton(onClick = { onAction(HomeScreenActions.SearchActivated) }) {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = stringResource(R.string.forecast_search_content_description),
+                )
             }
         }
-    ) { paddingValues ->
+    ) { paddingValues -> Box(modifier = Modifier.fillMaxSize()) {
         when(state){
             is HomeScreenUiState.Loading -> {
                 LoadingScreen()
@@ -205,5 +213,20 @@ fun HomeScreenContent(
                 }
             }
         }
-    }
+
+        if (searchState.isActive){
+            CitySearchBar(
+                query = searchState.query,
+                isSearching = searchState.isSearching,
+                results = searchState.results,
+                onQueryChange = { onAction(HomeScreenActions.SearchQueryChanged(it)) },
+                onDismiss = { onAction(HomeScreenActions.SearchDismissed) },
+                onPlaceSelected = { onAction(HomeScreenActions.PlaceSelected(it)) },
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(paddingValues)
+                    .fillMaxWidth(),
+            )
+        }
+    } }
 }

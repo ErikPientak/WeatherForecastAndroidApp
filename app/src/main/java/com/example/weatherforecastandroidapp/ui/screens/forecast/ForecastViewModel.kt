@@ -1,9 +1,10 @@
 package com.example.weatherforecastandroidapp.ui.screens.forecast
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherforecastandroidapp.R
+import com.example.weatherforecastandroidapp.data.location.ActiveLocation
+import com.example.weatherforecastandroidapp.data.location.ActiveLocationController
 import com.example.weatherforecastandroidapp.data.location.LocationTracker
 import com.example.weatherforecastandroidapp.data.model.HourlyEntry
 import com.example.weatherforecastandroidapp.data.model.PlaceSearchResult
@@ -12,8 +13,6 @@ import com.example.weatherforecastandroidapp.data.repository.WeatherRepository
 import com.example.weatherforecastandroidapp.ui.elements.cards.PrecipitationPoint
 import com.example.weatherforecastandroidapp.ui.elements.cards.WeeklyForecastDay
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,93 +24,95 @@ import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.milliseconds
-
 
 @HiltViewModel
 class ForecastViewModel @Inject constructor(
     private val weatherRepository: WeatherRepository,
     private val locationTracker: LocationTracker,
     private val placesRepository: PlacesRepository,
+    private val activeLocationController: ActiveLocationController,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<ForecastUiState>(ForecastUiState.Loading)
     val uiState: StateFlow<ForecastUiState> = _uiState.asStateFlow()
 
+    // isActive (is the search bar showing) is the only piece of ForecastSearchState this screen
+    // still owns locally — query/results/isSearching are mirrored in from ActiveLocationController
+    // below, since that's now the single shared source of truth for search across screens.
     private val _searchState = MutableStateFlow(ForecastSearchState())
     val searchState: StateFlow<ForecastSearchState> = _searchState.asStateFlow()
 
-    // Overrides GPS location once a search result is picked. Session-only (not persisted) per the
-    // chosen UX: search reloads this screen's forecast, it doesn't touch Home/GPS or Saved Places.
-    private var selectedLocation: PlaceSearchResult? = null
-    private var searchJob: Job? = null
-
     init {
-        loadForecast()
+        viewModelScope.launch {
+            activeLocationController.activeLocation.collect { loadForecast() }
+        }
+        viewModelScope.launch {
+            activeLocationController.searchQuery.collect { query ->
+                _searchState.update { it.copy(query = query) }
+            }
+        }
+        viewModelScope.launch {
+            activeLocationController.searchResults.collect { results ->
+                _searchState.update { it.copy(results = results) }
+            }
+        }
+        viewModelScope.launch {
+            activeLocationController.isSearching.collect { isSearching ->
+                _searchState.update { it.copy(isSearching = isSearching) }
+            }
+        }
     }
 
     fun onAction(action: ForecastScreenActions) {
         when (action) {
             ForecastScreenActions.SearchActivated -> _searchState.update { it.copy(isActive = true) }
             ForecastScreenActions.SearchDismissed -> {
-                searchJob?.cancel()
-                _searchState.value = ForecastSearchState()
+                activeLocationController.onSearchQueryChange("")
+                _searchState.update { it.copy(isActive = false) }
             }
-            is ForecastScreenActions.SearchQueryChanged -> onSearchQueryChanged(action.query)
+            is ForecastScreenActions.SearchQueryChanged -> activeLocationController.onSearchQueryChange(action.query)
             is ForecastScreenActions.PlaceSelected -> onPlaceSelected(action.place)
-            is ForecastScreenActions.PlaceSaved -> selectedLocation?.let { onPlaceSaved(it) }
-        }
-    }
-
-    private fun onSearchQueryChanged(query: String) {
-        _searchState.update { it.copy(query = query) }
-        searchJob?.cancel()
-
-        if (query.isBlank()) {
-            _searchState.update { it.copy(results = emptyList(), isSearching = false) }
-            return
-        }
-
-        searchJob = viewModelScope.launch {
-            delay(SEARCH_DEBOUNCE_MS.milliseconds)
-            _searchState.update { it.copy(isSearching = true) }
-            placesRepository.search(query)
-                .onSuccess { results -> _searchState.update { it.copy(results = results, isSearching = false) } }
-                .onFailure { _searchState.update { it.copy(results = emptyList(), isSearching = false) } }
+            ForecastScreenActions.PlaceSaved -> onPlaceSaved()
         }
     }
 
     private fun onPlaceSelected(place: PlaceSearchResult) {
-        searchJob?.cancel()
-        selectedLocation = place
-        _searchState.value = ForecastSearchState()
-        loadForecast()
+        _searchState.update { it.copy(isActive = false) }
+        activeLocationController.selectPlace(place)
     }
 
-    private fun onPlaceSaved(place: PlaceSearchResult){
-        viewModelScope.launch {
-            placesRepository.addPlace(place)
+    // Only a Searched location has anything meaningful to save; GPS has no PlaceSearchResult to
+    // pass to PlacesRepository.addPlace, so saving while on GPS is a no-op.
+    private fun onPlaceSaved() {
+        val location = activeLocationController.activeLocation.value
+        if (location is ActiveLocation.Searched) {
+            viewModelScope.launch { placesRepository.addPlace(location.place) }
         }
-        Log.d("ForecastViewModel", "Saved place: $place")
     }
 
     private fun loadForecast() {
         viewModelScope.launch {
             _uiState.value = ForecastUiState.Loading
 
-            val override = selectedLocation
             val latitude: Double
             val longitude: Double
-            if (override != null) {
-                latitude = override.latitude
-                longitude = override.longitude
-            } else {
-                val location = locationTracker.getCurrentLocation()
-                if (location == null) {
-                    _uiState.value = ForecastUiState.Error(R.string.error_location_not_found)
-                    return@launch
+            val locationName: String
+
+            when (val location = activeLocationController.activeLocation.value) {
+                ActiveLocation.Gps -> {
+                    val gpsLocation = locationTracker.getCurrentLocation()
+                    if (gpsLocation == null) {
+                        _uiState.value = ForecastUiState.Error(R.string.error_location_not_found)
+                        return@launch
+                    }
+                    latitude = gpsLocation.latitude
+                    longitude = gpsLocation.longitude
+                    locationName = ""
                 }
-                latitude = location.latitude
-                longitude = location.longitude
+                is ActiveLocation.Searched -> {
+                    latitude = location.place.latitude
+                    longitude = location.place.longitude
+                    locationName = location.place.name
+                }
             }
 
             weatherRepository.getForecast(latitude, longitude)
@@ -137,7 +138,7 @@ class ForecastViewModel @Inject constructor(
                             )
                         },
                         hourlyForecast = forecast.hourly.toPrecipitationPoints(),
-                        locationName = selectedLocation?.name ?: ""
+                        locationName = locationName,
                     )
                 }
                 .onFailure { _uiState.value = ForecastUiState.Error(R.string.error_could_not_load_forecast) }
@@ -163,7 +164,6 @@ class ForecastViewModel @Inject constructor(
     private companion object {
         const val HOUR_STEP = 4
         const val MAX_HOURLY_POINTS = 5
-        const val SEARCH_DEBOUNCE_MS = 350L
         val TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
     }
 }

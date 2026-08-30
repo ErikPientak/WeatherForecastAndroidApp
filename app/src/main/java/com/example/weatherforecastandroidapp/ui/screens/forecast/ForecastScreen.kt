@@ -47,6 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.weatherforecastandroidapp.R
 import com.example.weatherforecastandroidapp.data.model.PlaceSearchResult
 import com.example.weatherforecastandroidapp.ui.elements.BaseScreen
+import com.example.weatherforecastandroidapp.ui.elements.CitySearchBar
 import com.example.weatherforecastandroidapp.ui.elements.LoadingScreen
 import com.example.weatherforecastandroidapp.ui.elements.cards.PrecipitationChanceGraphCard
 import com.example.weatherforecastandroidapp.ui.elements.cards.WeeklyForecastCard
@@ -151,8 +152,10 @@ fun ForecastScreenContent(
         }
 
         if (searchState.isActive) {
-            ForecastCitySearchBar(
-                state = searchState,
+            CitySearchBar(
+                query = searchState.query,
+                isSearching = searchState.isSearching,
+                results = searchState.results,
                 onQueryChange = { onAction(ForecastScreenActions.SearchQueryChanged(it)) },
                 onDismiss = { onAction(ForecastScreenActions.SearchDismissed) },
                 onPlaceSelected = { onAction(ForecastScreenActions.PlaceSelected(it)) },
@@ -161,117 +164,8 @@ fun ForecastScreenContent(
                     .padding(paddingValues)
                     .fillMaxWidth(),
             )
-        }
-    } }
-}
-
-// Docked (not full-screen) search takeover: results render as a bounded, elevated panel anchored
-// below the input field, with the rest of the screen still visible behind it — the M3 `SearchBar`
-// component with `expanded = true` is instead a full-screen scrim pattern, which isn't wanted here.
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ForecastCitySearchBar(
-    state: ForecastSearchState,
-    onQueryChange: (String) -> Unit,
-    onDismiss: () -> Unit,
-    onPlaceSelected: (PlaceSearchResult) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    DockedSearchBar(
-        inputField = {
-            SearchBarDefaults.InputField(
-                query = state.query,
-                onQueryChange = onQueryChange,
-                onSearch = {},
-                expanded = true,
-                onExpandedChange = { if (!it) onDismiss() },
-                placeholder = { Text(stringResource(R.string.forecast_search_placeholder)) },
-                leadingIcon = {
-                    IconButton(onClick = onDismiss) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.forecast_search_close_content_description),
-                        )
-                    }
-                },
-                trailingIcon = {
-                    if (state.query.isNotEmpty()) {
-                        IconButton(onClick = { onQueryChange("") }) {
-                            Icon(
-                                imageVector = Icons.Filled.Close,
-                                contentDescription = stringResource(R.string.forecast_search_clear_content_description),
-                            )
-                        }
-                    }
-                },
-            )
-        },
-        expanded = true,
-        onExpandedChange = { if (!it) onDismiss() },
-        // Same surfaceContainer/shapes.medium chrome the rest of this app's cards use (see
-        // MetricCard.kt, PrecipitationChanceGraphCard.kt) so the floating panel reads as
-        // consistent with the app's visual language rather than M3's default docked styling.
-        shape = MaterialTheme.shapes.medium,
-        colors = SearchBarDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-        modifier = modifier
-            .padding(horizontal = 12.dp, vertical = 8.dp),
-    ) {
-        when {
-            state.isSearching -> {
-                Box(modifier = Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            }
-            state.query.isNotBlank() && state.results.isEmpty() -> {
-                Text(
-                    text = stringResource(R.string.forecast_search_no_results),
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            else -> {
-                // Capped so a long result list scrolls internally instead of pushing the docked
-                // panel to fill the screen (the full-screen-takeover behavior this fix removes).
-                LazyColumn(modifier = Modifier.heightIn(max = 360.dp)) {
-                    itemsIndexed(state.results) { index, result ->
-                        if (index > 0) {
-                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                        }
-                        ForecastCitySearchResultRow(result = result, onClick = { onPlaceSelected(result) })
-                    }
-                }
             }
         }
     }
 }
 
-@Composable
-private fun ForecastCitySearchResultRow(result: PlaceSearchResult, onClick: () -> Unit) {
-    val subtitle = listOfNotNull(result.admin1, result.country).joinToString(", ")
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            imageVector = Icons.Filled.LocationOn,
-            // Decorative: the name/subtitle text next to it already conveys this is a place.
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(text = result.name, style = MaterialTheme.typography.bodyLarge)
-            if (subtitle.isNotEmpty()) {
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-    }
-}
