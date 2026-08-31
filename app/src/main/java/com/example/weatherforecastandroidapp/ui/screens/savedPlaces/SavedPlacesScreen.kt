@@ -22,16 +22,19 @@ import com.example.weatherforecastandroidapp.ui.elements.cards.SavedLocationCard
 import com.example.weatherforecastandroidapp.ui.elements.cards.SavedLocationWeather
 
 @Composable
-fun SavedPlacesScreen() {
+fun SavedPlacesScreen(
+    onPlaceClick: (SavedLocationWeather) -> Unit = {},
+) {
     val viewModel = hiltViewModel<SavedPlaceScreenViewModel>()
     val state = viewModel.uiState.collectAsStateWithLifecycle()
 
-    SavedPlaceScreenContent(state = state.value)
+    SavedPlaceScreenContent(state = state.value, onPlaceClick = onPlaceClick)
 }
 
 @Composable
 fun SavedPlaceScreenContent(
-    state: SavedPlacesScreenUiState
+    state: SavedPlacesScreenUiState,
+    onPlaceClick: (SavedLocationWeather) -> Unit = {},
 ){
     BaseScreen(
         topBarText = stringResource(R.string.nav_saved_places),
@@ -51,6 +54,7 @@ fun SavedPlaceScreenContent(
             is SavedPlacesScreenUiState.Success -> {
                 SavedPlaceGrid(
                     places = state.places,
+                    onPlaceClick = onPlaceClick,
                     modifier = Modifier.padding(paddingValues),
                 )
             }
@@ -61,6 +65,7 @@ fun SavedPlaceScreenContent(
 @Composable
 fun SavedPlaceGrid(
     places: List<SavedLocationWeather>,
+    onPlaceClick: (SavedLocationWeather) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
@@ -71,8 +76,10 @@ fun SavedPlaceGrid(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         items(places.size) { index ->
+            val weather = places[index]
             SavedLocationCard(
-                weather = places[index]
+                weather = weather,
+                onClick = { onPlaceClick(weather) },
             )
         }
     }

@@ -43,6 +43,8 @@ class SavedPlaceScreenViewModel @Inject constructor(
         }
     }
 
+    private fun deletePlace(place: SavedPlace) {}
+
     // WeatherForecast.current.time is a local ISO string with no offset (repo requests
     // timezone = "auto"), so it's already this place's own local time and LocalDateTime.parse
     // works directly. isDay comes straight from the API's own is_day flag for that place, not a
@@ -55,6 +57,9 @@ class SavedPlaceScreenViewModel @Inject constructor(
         isDay = forecast.current.isDay,
         highTemperature = forecast.daily[0].tempMax.toInt(),
         lowTemperature = forecast.daily[0].tempMin.toInt(),
+        id = id,
+        latitude = latitude,
+        longitude = longitude,
     )
 
     private companion object {

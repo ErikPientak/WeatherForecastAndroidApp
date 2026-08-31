@@ -4,6 +4,8 @@
     <string name="nav_home">Domů</string>
     <string name="nav_forecast">Předpověď</string>
     <string name="nav_saved_places">Uložená místa</string>
+    <string name="detail_screen_title">Detail lokace</string>
+    <string name="detail_delete_content_description">Odebrat uložené místo</string>
 
     <!-- Error messages -->
     <string name="error_location_not_found">Nemůžeme najít lokaci. Ujistěte se, že povolíte přístup k poloze a zapnete GPS.</string>

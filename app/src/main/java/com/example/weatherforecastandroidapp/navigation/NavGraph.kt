@@ -25,6 +25,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.weatherforecastandroidapp.ui.screens.detail.DetailScreen
 import com.example.weatherforecastandroidapp.ui.screens.forecast.ForecastScreen
 import com.example.weatherforecastandroidapp.ui.screens.home.HomeScreen
 import com.example.weatherforecastandroidapp.ui.screens.savedPlaces.SavedPlacesScreen
@@ -87,11 +88,30 @@ fun NavGraph(
         ) {
             composable<Destination.HomeScreen> { HomeScreen() }
             composable<Destination.ForecastScreen> { ForecastScreen() }
-            composable<Destination.SavedPlacesScreen> { SavedPlacesScreen() }
-            composable<Destination.SearchPlaceScreen> {}
+            composable<Destination.SavedPlacesScreen> {
+                SavedPlacesScreen(
+                    onPlaceClick = { place ->
+                        navigationRouter.navigateTo(
+                            Destination.DetailScreen(
+                                placeId = place.id,
+                                placeName = place.cityName,
+                                placeLatitude = place.latitude,
+                                placeLongitude = place.longitude,
+                            )
+                        )
+                    }
+                )
+            }
             composable<Destination.SettingsScreen> {}
             composable<Destination.DetailScreen> { backStackEntry ->
                 val args = backStackEntry.toRoute<Destination.DetailScreen>()
+                DetailScreen(
+                    placeId = args.placeId,
+                    placeName = args.placeName,
+                    placeLatitude = args.placeLatitude,
+                    placeLongitude = args.placeLongitude,
+                    onBack = { navigationRouter.returnBack() },
+                )
             }
         }
     }

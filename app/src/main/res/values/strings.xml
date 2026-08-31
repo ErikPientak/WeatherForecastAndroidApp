@@ -3,6 +3,8 @@
     <string name="nav_home">Home</string>
     <string name="nav_forecast">Forecast</string>
     <string name="nav_saved_places">Saved Places</string>
+    <string name="detail_screen_title">Location Details</string>
+    <string name="detail_delete_content_description">Remove saved place</string>
 
     <!-- Error messages -->
     <string name="error_location_not_found">Could not retrieve location. Make sure to grant permission and enable GPS.</string>

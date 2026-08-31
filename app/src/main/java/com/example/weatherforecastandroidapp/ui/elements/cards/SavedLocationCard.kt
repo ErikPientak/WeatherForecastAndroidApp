@@ -1,6 +1,7 @@
 package com.example.weatherforecastandroidapp.ui.elements.cards
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,6 +49,11 @@ data class SavedLocationWeather(
     val isDay: Boolean = true,
     val highTemperature: Int,
     val lowTemperature: Int,
+    // Identity, not display data: carried so a click handler can navigate to DetailScreen without
+    // a second lookup. Defaulted so the preview sample data below doesn't need to specify them.
+    val id: Long = 0L,
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0,
 )
 
 /**
@@ -88,6 +94,7 @@ data class SavedLocationWeather(
 fun SavedLocationCard(
     weather: SavedLocationWeather,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
 ) {
     val colors = savedLocationCardColors(weatherCode = weather.weatherCode, isDay = weather.isDay)
     val conditionLabel = stringResource(WeatherCodeMapper.descriptionRes(weather.weatherCode)).uppercase()
@@ -112,7 +119,9 @@ fun SavedLocationCard(
             // spelled out here alongside everything else in one announcement.
             .semantics(mergeDescendants = true) {
                 contentDescription = cardDescription
-            },
+            }
+            .clickable(onClick = onClick)
+        ,
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Row(
