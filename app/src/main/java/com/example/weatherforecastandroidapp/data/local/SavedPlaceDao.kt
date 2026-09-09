@@ -12,6 +12,9 @@ interface SavedPlaceDao {
     @Query("SELECT * FROM saved_places ORDER BY addedAt DESC")
     fun observeAll(): Flow<List<SavedPlaceEntity>>
 
+    @Query("SELECT EXISTS(SELECT 1 FROM saved_places WHERE latitude = :latitude AND longitude = :longitude)")
+    suspend fun exists(latitude: Double, longitude: Double): Boolean
+
     @Insert
     suspend fun insert(place: SavedPlaceEntity): Long
 

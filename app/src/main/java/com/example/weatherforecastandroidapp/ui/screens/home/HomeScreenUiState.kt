@@ -19,6 +19,7 @@ sealed interface HomeScreenUiState {
         val pressure: Double,
         val dewPoint: Int,
         val hourlyForecast: List<HourlyForecastItem>,
+        val isSaved: Boolean = false,
     ) : HomeScreenUiState
     data object PermissionRequired : HomeScreenUiState
 }

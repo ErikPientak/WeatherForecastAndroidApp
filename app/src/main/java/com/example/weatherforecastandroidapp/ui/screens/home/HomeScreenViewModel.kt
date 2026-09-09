@@ -12,8 +12,11 @@ import com.example.weatherforecastandroidapp.data.repository.PlacesRepository
 import com.example.weatherforecastandroidapp.data.repository.WeatherRepository
 import com.example.weatherforecastandroidapp.ui.elements.cards.HourlyForecastItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -44,6 +47,12 @@ class HomeScreenViewModel @Inject constructor(
     // loadForecast() would call LocationTracker.getCurrentLocation() (which assumes permission was
     // already confirmed) before it actually was, risking a SecurityException on first launch.
     private var hasLocationPermission = false
+
+    // One-off "place saved"/"already saved" events for the UI to surface as a Snackbar. A
+    // SharedFlow (not StateFlow) so a repeat save re-emits the same message instead of being
+    // deduped, and so a message isn't replayed to a new collector after being shown once.
+    private val _saveResultEvent = MutableSharedFlow<Int>(extraBufferCapacity = 1)
+    val saveResultEvent: SharedFlow<Int> = _saveResultEvent.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -96,7 +105,15 @@ class HomeScreenViewModel @Inject constructor(
     private fun onPlaceSaved() {
         val location = activeLocationController.activeLocation.value
         if (location is ActiveLocation.Searched) {
-            viewModelScope.launch { placesRepository.addPlace(location.place) }
+            viewModelScope.launch {
+                val newlySaved = placesRepository.addPlace(location.place)
+                _saveResultEvent.emit(
+                    if (newlySaved) R.string.place_saved_message else R.string.place_already_saved_message
+                )
+                _uiState.update { state ->
+                    if (state is HomeScreenUiState.Success) state.copy(isSaved = true) else state
+                }
+            }
         }
     }
 
@@ -116,6 +133,7 @@ class HomeScreenViewModel @Inject constructor(
             val latitude: Double
             val longitude: Double
             val locationName: String
+            val isSaved: Boolean
 
             when (location) {
                 ActiveLocation.Gps -> {
@@ -127,11 +145,13 @@ class HomeScreenViewModel @Inject constructor(
                     latitude = gpsLocation.latitude
                     longitude = gpsLocation.longitude
                     locationName = ""
+                    isSaved = false
                 }
                 is ActiveLocation.Searched -> {
                     latitude = location.place.latitude
                     longitude = location.place.longitude
                     locationName = location.place.name
+                    isSaved = placesRepository.isPlaceSaved(latitude, longitude)
                 }
             }
 
@@ -150,6 +170,7 @@ class HomeScreenViewModel @Inject constructor(
                         dewPoint = forecast.current.dewPoint.toInt(),
                         hourlyForecast = forecast.hourly.toForecastItems(),
                         locationName = locationName,
+                        isSaved = isSaved,
                     )
                 }
                 .onFailure { _uiState.value = HomeScreenUiState.Error(R.string.error_could_not_load_forecast) }

@@ -12,7 +12,8 @@ sealed interface ForecastUiState {
         val dailyForecast: List<PrecipitationPoint>,
         val hourlyForecast: List<PrecipitationPoint>,
         val weeklyForecast: List<WeeklyForecastDay>,
-        val locationName: String
+        val locationName: String,
+        val isSaved: Boolean = false,
     ) : ForecastUiState
     data object PermissionRequired : ForecastUiState
 

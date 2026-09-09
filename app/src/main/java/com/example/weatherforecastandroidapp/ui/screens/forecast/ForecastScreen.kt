@@ -35,11 +35,13 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonColors
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,6 +58,7 @@ import com.example.weatherforecastandroidapp.data.model.PlaceSearchResult
 import com.example.weatherforecastandroidapp.ui.elements.BaseScreen
 import com.example.weatherforecastandroidapp.ui.elements.CitySearchBar
 import com.example.weatherforecastandroidapp.ui.elements.LoadingScreen
+import com.example.weatherforecastandroidapp.ui.elements.SaveResultSnackbarVisuals
 import com.example.weatherforecastandroidapp.ui.elements.cards.PrecipitationChanceGraphCard
 import com.example.weatherforecastandroidapp.ui.elements.cards.WeeklyForecastCard
 
@@ -86,10 +89,23 @@ fun ForecastScreen(){
         }
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(Unit) {
+        viewModel.saveResultEvent.collect { messageRes ->
+            snackbarHostState.showSnackbar(
+                SaveResultSnackbarVisuals(
+                    message = context.getString(messageRes),
+                    isNewSave = messageRes == R.string.place_saved_message,
+                )
+            )
+        }
+    }
+
     ForecastScreenContent(
         state = state.value,
         searchState = searchState.value,
         onAction = viewModel::onAction,
+        snackbarHostState = snackbarHostState,
     )
 }
 
@@ -98,6 +114,7 @@ fun ForecastScreenContent(
     state: ForecastUiState,
     searchState: ForecastSearchState,
     onAction: (ForecastScreenActions) -> Unit,
+    snackbarHostState: SnackbarHostState? = null,
 ){
     var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
     val precipitationGraphOptions = listOf(
@@ -110,12 +127,17 @@ fun ForecastScreenContent(
 
     BaseScreen(
         topBarText = locationName,
+        snackbarHostState = snackbarHostState,
         actions = {
             if(locationName != stringResource(R.string.nav_forecast)){
+                val isSaved = (state as? ForecastUiState.Success)?.isSaved == true
                 IconButton(onClick = { onAction(ForecastScreenActions.PlaceSaved) }) {
                     Icon(
-                        painter = painterResource(R.drawable.bookmark),
-                        contentDescription = stringResource(R.string.forecast_save_content_description),
+                        painter = painterResource(if (isSaved) R.drawable.filled_bookmark else R.drawable.bookmark),
+                        contentDescription = stringResource(
+                            if (isSaved) R.string.forecast_saved_content_description
+                            else R.string.forecast_save_content_description
+                        ),
                     )
                 }
             }

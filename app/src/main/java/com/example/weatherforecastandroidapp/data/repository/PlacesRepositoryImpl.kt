@@ -32,7 +32,9 @@ class PlacesRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun addPlace(result: PlaceSearchResult) {
+    override suspend fun addPlace(result: PlaceSearchResult): Boolean {
+        if (savedPlaceDao.exists(result.latitude, result.longitude)) return false
+
         savedPlaceDao.insert(
             SavedPlaceEntity(
                 name = result.name,
@@ -43,11 +45,15 @@ class PlacesRepositoryImpl @Inject constructor(
                 addedAt = System.currentTimeMillis(),
             )
         )
+        return true
     }
 
     override suspend fun removePlace(place: SavedPlace) {
         savedPlaceDao.deleteById(place.id)
     }
+
+    override suspend fun isPlaceSaved(latitude: Double, longitude: Double): Boolean =
+        savedPlaceDao.exists(latitude, longitude)
 
     private fun SavedPlaceEntity.toDomain() = SavedPlace(
         id = id,

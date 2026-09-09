@@ -22,10 +22,12 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -39,6 +41,7 @@ import com.example.weatherforecastandroidapp.R
 import com.example.weatherforecastandroidapp.ui.elements.BaseScreen
 import com.example.weatherforecastandroidapp.ui.elements.CitySearchBar
 import com.example.weatherforecastandroidapp.ui.elements.LoadingScreen
+import com.example.weatherforecastandroidapp.ui.elements.SaveResultSnackbarVisuals
 import com.example.weatherforecastandroidapp.ui.elements.cards.HomeCard
 import com.example.weatherforecastandroidapp.ui.elements.cards.HourlyForecastCard
 import com.example.weatherforecastandroidapp.ui.elements.cards.MetricCard
@@ -78,10 +81,23 @@ fun HomeScreen() {
         }
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(Unit) {
+        viewModel.saveResultEvent.collect { messageRes ->
+            snackbarHostState.showSnackbar(
+                SaveResultSnackbarVisuals(
+                    message = context.getString(messageRes),
+                    isNewSave = messageRes == R.string.place_saved_message,
+                )
+            )
+        }
+    }
+
     HomeScreenContent(
         state = state.value,
         onAction = viewModel::onAction,
-        searchState = searchState.value
+        searchState = searchState.value,
+        snackbarHostState = snackbarHostState,
     )
 }
 
@@ -90,18 +106,24 @@ fun HomeScreenContent(
     state: HomeScreenUiState,
     searchState: HomeScreenSearchState,
     onAction: (HomeScreenActions) -> Unit,
+    snackbarHostState: SnackbarHostState? = null,
 ){
     val locationName = (state as? HomeScreenUiState.Success)?.locationName?.ifBlank { null }
         ?: stringResource(R.string.nav_home)
 
     BaseScreen(
         topBarText = locationName,
+        snackbarHostState = snackbarHostState,
         actions = {
             if(locationName != stringResource(R.string.nav_home)){
+                val isSaved = (state as? HomeScreenUiState.Success)?.isSaved == true
                 IconButton(onClick = { onAction(HomeScreenActions.PlaceSaved) }) {
                     Icon(
-                        painter = painterResource(R.drawable.bookmark),
-                        contentDescription = stringResource(R.string.forecast_save_content_description),
+                        painter = painterResource(if (isSaved) R.drawable.filled_bookmark else R.drawable.bookmark),
+                        contentDescription = stringResource(
+                            if (isSaved) R.string.forecast_saved_content_description
+                            else R.string.forecast_save_content_description
+                        ),
                     )
                 }
             }
