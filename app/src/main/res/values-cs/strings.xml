@@ -6,6 +6,10 @@
     <string name="nav_saved_places">Uložená místa</string>
     <string name="detail_screen_title">Detail lokace</string>
     <string name="detail_delete_content_description">Odebrat uložené místo</string>
+    <string name="delete_place_dialog_title">Odebrat místo</string>
+    <string name="delete_place_dialog_message">Odebrat %1$s z Uložených míst?</string>
+    <string name="delete_place_dialog_confirm">Odebrat</string>
+    <string name="dialog_cancel">Zrušit</string>
 
     <!-- Error messages -->
     <string name="error_location_not_found">Nemůžeme najít lokaci. Ujistěte se, že povolíte přístup k poloze a zapnete GPS.</string>
@@ -72,6 +76,10 @@
     <string name="forecast_search_no_results">Žádná města nenalezena</string>
     <string name="forecast_search_result_description">%1$s, %2$s</string>
     <string name="forecast_save_content_description">Uložit místo</string>
+    <string name="forecast_saved_content_description">Již uloženo</string>
+    <string name="forecast_permission_required">Vyžadováno oprávnění</string>
+    <string name="place_saved_message">Uloženo do Uložených míst</string>
+    <string name="place_already_saved_message">Již uloženo</string>
 
     <!-- Weather condition descriptions (WMO codes) -->
     <string name="weather_clear_sky">Jasno</string>

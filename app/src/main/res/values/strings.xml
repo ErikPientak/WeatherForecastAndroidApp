@@ -5,6 +5,10 @@
     <string name="nav_saved_places">Saved Places</string>
     <string name="detail_screen_title">Location Details</string>
     <string name="detail_delete_content_description">Remove saved place</string>
+    <string name="delete_place_dialog_title">Remove place</string>
+    <string name="delete_place_dialog_message">Remove %1$s from Saved Places?</string>
+    <string name="delete_place_dialog_confirm">Remove</string>
+    <string name="dialog_cancel">Cancel</string>
 
     <!-- Error messages -->
     <string name="error_location_not_found">Could not retrieve location. Make sure to grant permission and enable GPS.</string>

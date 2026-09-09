@@ -1,7 +1,7 @@
 package com.example.weatherforecastandroidapp.ui.elements.cards
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -95,6 +95,7 @@ fun SavedLocationCard(
     weather: SavedLocationWeather,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
+    onLongClick: () -> Unit = {},
 ) {
     val colors = savedLocationCardColors(weatherCode = weather.weatherCode, isDay = weather.isDay)
     val conditionLabel = stringResource(WeatherCodeMapper.descriptionRes(weather.weatherCode)).uppercase()
@@ -120,8 +121,7 @@ fun SavedLocationCard(
             .semantics(mergeDescendants = true) {
                 contentDescription = cardDescription
             }
-            .clickable(onClick = onClick)
-        ,
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Row(

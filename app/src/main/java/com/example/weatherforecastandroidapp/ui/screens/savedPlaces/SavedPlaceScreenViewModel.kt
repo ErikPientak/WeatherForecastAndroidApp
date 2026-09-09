@@ -43,7 +43,20 @@ class SavedPlaceScreenViewModel @Inject constructor(
         }
     }
 
-    private fun deletePlace(place: SavedPlace) {}
+    fun removePlace(place: SavedLocationWeather) {
+        viewModelScope.launch {
+            placesRepository.removePlace(
+                SavedPlace(
+                    id = place.id,
+                    name = place.cityName,
+                    admin1 = null,
+                    country = null,
+                    latitude = place.latitude,
+                    longitude = place.longitude,
+                )
+            )
+        }
+    }
 
     // WeatherForecast.current.time is a local ISO string with no offset (repo requests
     // timezone = "auto"), so it's already this place's own local time and LocalDateTime.parse
