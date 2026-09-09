@@ -2,6 +2,7 @@ package com.example.weatherforecastandroidapp.ui.screens.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weatherforecastandroidapp.R
 import com.example.weatherforecastandroidapp.data.model.HourlyEntry
 import com.example.weatherforecastandroidapp.data.model.SavedPlace
 import com.example.weatherforecastandroidapp.data.repository.PlacesRepository
@@ -39,11 +40,6 @@ class DetailScreenViewModel @Inject constructor(
                     locationName = placeName,
                     temperature = forecast.current.temperature.toInt(),
                     weatherCode = forecast.current.weatherCode,
-                    // Unlike HomeScreenViewModel (device's own location, no isDay from the API
-                    // response usable in the same way), Detail shows an arbitrary place, so the
-                    // API's own current.isDay is the correct source — same convention as
-                    // SavedPlaceScreenViewModel, since a saved/searched place can be in a
-                    // different day/night state than the device's local time.
                     isDay = forecast.current.isDay,
                     highTemperature = forecast.daily[0].tempMax.toInt(),
                     lowTemperature = forecast.daily[0].tempMin.toInt(),
@@ -74,7 +70,7 @@ class DetailScreenViewModel @Inject constructor(
                     },
                     hourlyPrecipitation = forecast.hourly.toPrecipitationPoints()
                 )
-            }
+            }.onFailure { _uiState.value = DetailScreenUiState.Error(R.string.error_could_not_load_forecast) }
         }
     }
 
@@ -84,7 +80,6 @@ class DetailScreenViewModel @Inject constructor(
             onDeleted()
         }
     }
-
     // Mirrors HomeScreenViewModel.toForecastItems(): HourlyEntry.time is a local ISO string with
     // no offset (repo requests timezone = "auto"), so LocalDateTime.parse works directly.
     private fun List<HourlyEntry>.toForecastItems(): List<HourlyForecastItem> {

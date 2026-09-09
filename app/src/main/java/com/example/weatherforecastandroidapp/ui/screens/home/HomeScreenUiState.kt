@@ -7,6 +7,7 @@ sealed interface HomeScreenUiState {
     data object Loading : HomeScreenUiState
     data class Error(@param:StringRes val errorMessage: Int) : HomeScreenUiState
     data class Success(
+        val locationName: String,
         val temperature: Int,
         val weatherCode: Int,
         val isDay: Boolean,

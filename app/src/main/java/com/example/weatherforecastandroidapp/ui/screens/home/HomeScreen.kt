@@ -29,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -41,6 +42,8 @@ import com.example.weatherforecastandroidapp.ui.elements.LoadingScreen
 import com.example.weatherforecastandroidapp.ui.elements.cards.HomeCard
 import com.example.weatherforecastandroidapp.ui.elements.cards.HourlyForecastCard
 import com.example.weatherforecastandroidapp.ui.elements.cards.MetricCard
+import com.example.weatherforecastandroidapp.ui.screens.forecast.ForecastScreenActions
+import com.example.weatherforecastandroidapp.ui.screens.forecast.ForecastUiState
 import com.example.weatherforecastandroidapp.util.PressureCategoryMapper
 import com.example.weatherforecastandroidapp.util.UvIndexMapper
 import com.example.weatherforecastandroidapp.util.WindDirectionMapper
@@ -88,9 +91,21 @@ fun HomeScreenContent(
     searchState: HomeScreenSearchState,
     onAction: (HomeScreenActions) -> Unit,
 ){
+    val locationName = (state as? HomeScreenUiState.Success)?.locationName?.ifBlank { null }
+        ?: stringResource(R.string.nav_home)
+
     BaseScreen(
-        topBarText = stringResource(R.string.nav_home),
+        topBarText = locationName,
         actions = {
+            if(locationName != stringResource(R.string.nav_home)){
+                IconButton(onClick = { onAction(HomeScreenActions.PlaceSaved) }) {
+                    Icon(
+                        painter = painterResource(R.drawable.bookmark),
+                        contentDescription = stringResource(R.string.forecast_save_content_description),
+                    )
+                }
+            }
+
             IconButton(onClick = { onAction(HomeScreenActions.SearchActivated) }) {
                 Icon(
                     imageVector = Icons.Filled.Search,

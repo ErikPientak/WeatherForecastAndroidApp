@@ -8,6 +8,7 @@ import com.example.weatherforecastandroidapp.data.location.ActiveLocationControl
 import com.example.weatherforecastandroidapp.data.location.LocationTracker
 import com.example.weatherforecastandroidapp.data.model.HourlyEntry
 import com.example.weatherforecastandroidapp.data.model.PlaceSearchResult
+import com.example.weatherforecastandroidapp.data.repository.PlacesRepository
 import com.example.weatherforecastandroidapp.data.repository.WeatherRepository
 import com.example.weatherforecastandroidapp.ui.elements.cards.HourlyForecastItem
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +27,7 @@ class HomeScreenViewModel @Inject constructor(
     private val weatherRepository: WeatherRepository,
     private val locationTracker: LocationTracker,
     private val activeLocationController: ActiveLocationController,
+    private val placesRepository: PlacesRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeScreenUiState>(HomeScreenUiState.Loading)
     val uiState: StateFlow<HomeScreenUiState> = _uiState.asStateFlow()
@@ -82,12 +84,20 @@ class HomeScreenViewModel @Inject constructor(
             }
             is HomeScreenActions.SearchQueryChanged -> activeLocationController.onSearchQueryChange(action.query)
             is HomeScreenActions.PlaceSelected -> onPlaceSelected(action.place)
+            is HomeScreenActions.PlaceSaved -> onPlaceSaved()
         }
     }
 
     private fun onPlaceSelected(place: PlaceSearchResult) {
         _searchState.update { it.copy(isActive = false) }
         activeLocationController.selectPlace(place)
+    }
+
+    private fun onPlaceSaved() {
+        val location = activeLocationController.activeLocation.value
+        if (location is ActiveLocation.Searched) {
+            viewModelScope.launch { placesRepository.addPlace(location.place) }
+        }
     }
 
     private fun loadForecast() {
@@ -130,7 +140,7 @@ class HomeScreenViewModel @Inject constructor(
                     _uiState.value = HomeScreenUiState.Success(
                         temperature = forecast.current.temperature.toInt(),
                         weatherCode = forecast.current.weatherCode,
-                        isDay = LocalDateTime.now().hour in 6..18,
+                        isDay = forecast.current.isDay,
                         highTemperature = forecast.daily[0].tempMax.toInt(),
                         lowTemperature = forecast.daily[0].tempMin.toInt(),
                         humidity = forecast.current.humidity,
@@ -139,6 +149,7 @@ class HomeScreenViewModel @Inject constructor(
                         pressure = forecast.current.pressure,
                         dewPoint = forecast.current.dewPoint.toInt(),
                         hourlyForecast = forecast.hourly.toForecastItems(),
+                        locationName = locationName,
                     )
                 }
                 .onFailure { _uiState.value = HomeScreenUiState.Error(R.string.error_could_not_load_forecast) }

@@ -1,6 +1,7 @@
 package com.example.weatherforecastandroidapp.ui.screens.home
 
 import com.example.weatherforecastandroidapp.data.model.PlaceSearchResult
+import com.example.weatherforecastandroidapp.ui.screens.forecast.ForecastScreenActions
 
 sealed interface HomeScreenActions {
     data object Retry : HomeScreenActions
@@ -11,5 +12,8 @@ sealed interface HomeScreenActions {
     data object SearchActivated : HomeScreenActions
     data object SearchDismissed : HomeScreenActions
     data class SearchQueryChanged(val query: String) : HomeScreenActions
+    data object PlaceSaved : HomeScreenActions
+
     data class PlaceSelected(val place: PlaceSearchResult) : HomeScreenActions
+
 }

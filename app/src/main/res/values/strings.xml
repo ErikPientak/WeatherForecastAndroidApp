@@ -71,6 +71,7 @@
     <string name="forecast_search_no_results">No cities found</string>
     <string name="forecast_search_result_description">%1$s, %2$s</string>
     <string name="forecast_save_content_description">Save place</string>
+    <string name="forecast_permission_required">Permission required</string>
 
     <!-- Weather condition descriptions (WMO codes) -->
     <string name="weather_clear_sky">Clear sky</string>

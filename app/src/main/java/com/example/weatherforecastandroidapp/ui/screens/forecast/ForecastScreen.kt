@@ -1,5 +1,9 @@
 package com.example.weatherforecastandroidapp.ui.screens.forecast
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,15 +37,18 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.weatherforecastandroidapp.R
@@ -57,6 +64,27 @@ fun ForecastScreen(){
     val viewModel = hiltViewModel<ForecastViewModel>()
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     val searchState = viewModel.searchState.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ){ granted ->
+        viewModel.onAction(if (granted) ForecastScreenActions.LocationPermissionGranted
+        else ForecastScreenActions.LocationPermissionDenied)
+    }
+
+    LaunchedEffect(Unit) {
+        val alreadyGranted = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (alreadyGranted) {
+            viewModel.onAction(ForecastScreenActions.LocationPermissionGranted)
+        }else{
+            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
 
     ForecastScreenContent(
         state = state.value,
@@ -83,11 +111,13 @@ fun ForecastScreenContent(
     BaseScreen(
         topBarText = locationName,
         actions = {
-            IconButton(onClick = { onAction(ForecastScreenActions.PlaceSaved) }) {
-                Icon(
-                    painter = painterResource(R.drawable.bookmark),
-                    contentDescription = stringResource(R.string.forecast_save_content_description),
-                )
+            if(locationName != stringResource(R.string.nav_forecast)){
+                IconButton(onClick = { onAction(ForecastScreenActions.PlaceSaved) }) {
+                    Icon(
+                        painter = painterResource(R.drawable.bookmark),
+                        contentDescription = stringResource(R.string.forecast_save_content_description),
+                    )
+                }
             }
 
             IconButton(onClick = { onAction(ForecastScreenActions.SearchActivated) }) {
@@ -101,6 +131,14 @@ fun ForecastScreenContent(
         when(state){
             is ForecastUiState.Loading -> {
                 LoadingScreen()
+            }
+            is ForecastUiState.PermissionRequired -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ){
+                    Text(text = stringResource(R.string.forecast_permission_required))
+                }
             }
             is ForecastUiState.Error -> {
                 Box(

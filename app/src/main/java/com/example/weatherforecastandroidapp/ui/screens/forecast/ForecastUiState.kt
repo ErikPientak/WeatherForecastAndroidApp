@@ -14,5 +14,6 @@ sealed interface ForecastUiState {
         val weeklyForecast: List<WeeklyForecastDay>,
         val locationName: String
     ) : ForecastUiState
+    data object PermissionRequired : ForecastUiState
 
 }
