@@ -56,6 +56,25 @@ Build config
 - Dependency versions centralized in gradle/libs.versions.toml
 
 
+Testing
+-------
+- Unit tests (app/src/test), run via `./gradlew test`:
+  - util/: full boundary-tested coverage of WeatherCodeMapper, UvIndexMapper,
+    PressureCategoryMapper, and WindDirectionMapper (category thresholds, day/night
+    branching, degree wrap-around/negative input).
+  - data/repository/: PlacesRepositoryImpl (duplicate-place rejection on addPlace) and
+    WeatherRepositoryImpl (DTO-to-domain mapping, network failures wrapped into
+    Result.failure, CancellationException rethrown instead of swallowed).
+  - ui/screens/home/: HomeScreenViewModel (GPS and searched-location forecast loading,
+    permission gating, save/already-saved flow). Uses MockK for fakes and
+    kotlinx-coroutines-test with a shared MainDispatcherRule
+    (app/src/test/.../MainDispatcherRule.kt) to drive viewModelScope on a controllable
+    test dispatcher.
+- Not covered yet: ForecastViewModel, SavedPlaceScreenViewModel, DetailScreenViewModel,
+  Room DAO tests, and Compose UI tests. Instrumented tests (app/src/androidTest) are
+  still the unmodified Android Studio template.
+
+
 Known gaps
 ----------
 - No unsave/delete action exists on the Saved Places grid itself (only from Detail).
