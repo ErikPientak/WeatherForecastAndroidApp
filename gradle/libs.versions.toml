@@ -19,6 +19,8 @@ navigationCompose = "2.9.8"
 room = "2.8.4"
 playServicesLocation = "21.4.0"
 coroutinesPlayServices = "1.10.2"
+kotlinxCoroutinesTest = "1.10.2"
+mockk = "1.14.7"
 okhttp = "5.5.0"
 
 [libraries]
@@ -60,6 +62,10 @@ okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhtt
 # Location
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutinesPlayServices" }
+
+# Testing
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
