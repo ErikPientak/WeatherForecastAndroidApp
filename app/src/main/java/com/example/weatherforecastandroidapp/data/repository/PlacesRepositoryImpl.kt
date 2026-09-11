@@ -5,6 +5,7 @@ import com.example.weatherforecastandroidapp.data.local.SavedPlaceEntity
 import com.example.weatherforecastandroidapp.data.model.PlaceSearchResult
 import com.example.weatherforecastandroidapp.data.model.SavedPlace
 import com.example.weatherforecastandroidapp.data.remote.GeocodingApiService
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -17,20 +18,27 @@ class PlacesRepositoryImpl @Inject constructor(
     override fun observeSavedPlaces(): Flow<List<SavedPlace>> =
         savedPlaceDao.observeAll().map { entities -> entities.map { it.toDomain() } }
 
-    override suspend fun search(query: String): Result<List<PlaceSearchResult>> = runCatching {
-        geocodingApiService.search(name = query, count = 10, language = "en", format = "json")
-            .results
-            .orEmpty()
-            .map {
-                PlaceSearchResult(
-                    name = it.name,
-                    admin1 = it.admin1,
-                    country = it.country,
-                    latitude = it.latitude,
-                    longitude = it.longitude,
-                )
-            }
-    }
+    override suspend fun search(query: String): Result<List<PlaceSearchResult>> =
+        try {
+            Result.success(
+                geocodingApiService.search(name = query, count = 10, language = "en", format = "json")
+                    .results
+                    .orEmpty()
+                    .map {
+                        PlaceSearchResult(
+                            name = it.name,
+                            admin1 = it.admin1,
+                            country = it.country,
+                            latitude = it.latitude,
+                            longitude = it.longitude,
+                        )
+                    }
+            )
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
 
     override suspend fun addPlace(result: PlaceSearchResult): Boolean {
         if (savedPlaceDao.exists(result.latitude, result.longitude)) return false

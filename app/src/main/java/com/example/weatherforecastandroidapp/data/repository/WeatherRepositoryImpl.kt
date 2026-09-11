@@ -6,6 +6,7 @@ import com.example.weatherforecastandroidapp.data.model.HourlyEntry
 import com.example.weatherforecastandroidapp.data.model.WeatherForecast
 import com.example.weatherforecastandroidapp.data.remote.WeatherApiService
 import com.example.weatherforecastandroidapp.data.remote.dto.WeatherForecastResponse
+import kotlinx.coroutines.CancellationException
 import javax.inject.Inject
 
 class WeatherRepositoryImpl @Inject constructor(
@@ -13,16 +14,22 @@ class WeatherRepositoryImpl @Inject constructor(
 ) : WeatherRepository {
 
     override suspend fun getForecast(latitude: Double, longitude: Double): Result<WeatherForecast> =
-        runCatching {
-            weatherApiService.getForecast(
-                latitude = latitude,
-                longitude = longitude,
-                current = CURRENT_FIELDS,
-                hourly = HOURLY_FIELDS,
-                daily = DAILY_FIELDS,
-                timezone = "auto",
-                forecastDays = 7,
-            ).toDomain()
+        try {
+            Result.success(
+                weatherApiService.getForecast(
+                    latitude = latitude,
+                    longitude = longitude,
+                    current = CURRENT_FIELDS,
+                    hourly = HOURLY_FIELDS,
+                    daily = DAILY_FIELDS,
+                    timezone = "auto",
+                    forecastDays = 7,
+                ).toDomain()
+            )
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(e)
         }
 
     private fun WeatherForecastResponse.toDomain(): WeatherForecast = WeatherForecast(

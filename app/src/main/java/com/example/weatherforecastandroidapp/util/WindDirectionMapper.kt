@@ -16,14 +16,15 @@ object WindDirectionMapper {
         return COMPASS_POINTS[index]
     }
 
+    // Each point covers a 45-degree wedge centered on its heading (e.g. NE = 22.5-67.5 degrees).
     private val COMPASS_POINTS = listOf(
-        R.string.wind_direction_n,
-        R.string.wind_direction_ne,
-        R.string.wind_direction_e,
-        R.string.wind_direction_se,
-        R.string.wind_direction_s,
-        R.string.wind_direction_sw,
-        R.string.wind_direction_w,
-        R.string.wind_direction_nw,
+        R.string.wind_direction_n,  // 337.5 - 22.5
+        R.string.wind_direction_ne, // 22.5 - 67.5
+        R.string.wind_direction_e,  // 67.5 - 112.5
+        R.string.wind_direction_se, // 112.5 - 157.5
+        R.string.wind_direction_s,  // 157.5 - 202.5
+        R.string.wind_direction_sw, // 202.5 - 247.5
+        R.string.wind_direction_w,  // 247.5 - 292.5
+        R.string.wind_direction_nw, // 292.5 - 337.5
     )
 }
